@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">暴走大王</string>
+    <string name="server_url">http://www.baozoudawang.com/?ct=api&amp;ac=check_version</string>
+    <string name="home_page">http://www.baozoudawang.com/app</string>
+</resources>

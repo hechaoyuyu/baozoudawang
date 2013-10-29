@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ivali.bzdw"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <!-- 
+        开启硬件加载，为以后加载flash时做准备：android:hardwareAccelerated="true"
+        设置为无标题栏风格：android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+        不由屏幕旋转而旋转：android:screenOrientation="portrait"
+        -->  
+        <activity
+            android:name=".Browser"
+            android:label="@string/app_name"            
+            android:hardwareAccelerated="true"            
+            android:theme="@android:style/Theme.NoTitleBar"            
+        	android:screenOrientation="portrait" >
+        </activity>
+        <!--
+        全屏模式：android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
+        -->
+        <activity
+            android:name=".Splash"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:screenOrientation="portrait" >
+            <!-- 
+            应用的入口，并显示在启动器上
+            -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    
+    
+</manifest>
