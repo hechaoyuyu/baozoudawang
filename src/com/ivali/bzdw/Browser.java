@@ -6,38 +6,40 @@ import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
+import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class Browser extends Activity 
 {
     private WebView webView;
+    private ProgressBar progressBar;
     private boolean is2CallBack = false;
+    protected static final String TAG = "Browser";
     
     @Override
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
-        
-        /**
-         * 不显示标题栏
-         * 两种方法：１是在AndroidManifest.xml中的activity下加
-         * android:theme="@android:style/Theme.NoTitleBar"
-         * １是在代码中加requestWindowFeature(Window.FEATURE_NO_TITLE);
-        **/
         setContentView(R.layout.browser);
         
-        webView = (WebView)findViewById(R.id.webview);
+        webView = (WebView)findViewById(R.id.webView);
+        progressBar = (ProgressBar)findViewById(R.id.progressBar);
         
         WebSettings settings = webView.getSettings();
         //激活JavaScript
-        settings.setJavaScriptEnabled(true);  
+        settings.setJavaScriptEnabled(true);
+        //支持JS打开新窗口
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
         
         //使用localStorage
         settings.setDomStorageEnabled(true);
@@ -49,15 +51,29 @@ public class Browser extends Activity
         
         //使用App缓存
         settings.setAppCacheEnabled(true); 
-        //settings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        //设置缓存最大大小
-        settings.setAppCacheMaxSize(1024 * 1024 * 8);
         String cachePath =webView.getContext().getDir("cache", Context.MODE_PRIVATE).getPath();
         settings.setAppCachePath(cachePath);
-        
-        //内外缩放
-        //settings.setSupportZoom(true);
-        //settings.setBuiltInZoomControls(true);
+       
+        //处理数据与进度
+        webView.setWebChromeClient(new WebChromeClient()
+        {
+            @Override
+            public void onExceededDatabaseQuota(String url, String databaseIdentifier, long currentQuota, 
+                    long estimatedSize, long totalUsedQuota, WebStorage.QuotaUpdater quotaUpdater) 
+            { 
+                quotaUpdater.updateQuota(estimatedSize * 2); 
+            } 
+            
+            public void onProgressChanged(WebView view, int progress)
+            {
+                progressBar.setProgress(progress);
+                if((progress == 100) && (progressBar.isShown()))
+                {
+                    //设置为不可见
+                    progressBar.setVisibility(View.GONE);
+                }
+            }   
+        });
         
         //当点击链接时,希望覆盖而不是打开新窗口
         webView.setWebViewClient(new WebViewClient() 
@@ -65,6 +81,7 @@ public class Browser extends Activity
             public boolean shouldOverrideUrlLoading(WebView view, String url) 
             {
                 view.loadUrl(url);
+                progressBar.setVisibility(View.VISIBLE);//可见
                 return true;
             }
         });
@@ -77,9 +94,9 @@ public class Browser extends Activity
             {  
                 if (event.getAction() == KeyEvent.ACTION_DOWN) 
                 {  
-                    if (keyCode == KeyEvent.KEYCODE_BACK && webView.canGoBack()) 
+                    if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) 
                     {  
-                        webView.goBack();   //后退  
+                        webView.goBack();   //后退 
                         return true;    //已处理  
                     }  
                 }  
@@ -89,12 +106,20 @@ public class Browser extends Activity
         
         //打开页面
         String home_page = getResources().getString(R.string.home_page);
-        webView.loadUrl(home_page);
-        //webView.loadUrl("http://m.baozoumanhua.com");
+        //webView.loadUrl(home_page);
+        webView.loadUrl("http://www.qq.com");
     }
     
-    @Override  
+    //重载屏幕变化事件，禁止重新调用onCreate方法
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) 
+    {
+        Log.d(TAG, "屏幕方向发生变化");
+        super.onConfigurationChanged(newConfig);     
+    }
+    
     //重载onKeyDown方法，连续两次点击返回键才退出程序
+    @Override  
     public boolean onKeyDown(int keyCode, KeyEvent event) 
     {   
         if( keyCode == KeyEvent.KEYCODE_BACK)

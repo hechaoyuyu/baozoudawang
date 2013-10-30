@@ -22,9 +22,10 @@ public final class R {
         public static final int splash=0x7f020002;
     }
     public static final class id {
-        public static final int splashscreen=0x7f070001;
-        public static final int version=0x7f070002;
-        public static final int webview=0x7f070000;
+        public static final int progressBar=0x7f070000;
+        public static final int splashscreen=0x7f070002;
+        public static final int version=0x7f070003;
+        public static final int webView=0x7f070001;
     }
     public static final class layout {
         public static final int browser=0x7f030000;

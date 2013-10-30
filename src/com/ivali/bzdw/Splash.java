@@ -15,8 +15,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.util.Log;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AlphaAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -54,55 +52,55 @@ public class Splash extends Activity
     
     private Handler handler = new Handler() 
     {
-        public void handleMessage(android.os.Message msg) 
+        public void handleMessage(Message msg) 
         {
             switch (msg.what) 
             {
-            case XML_PARSE_ERROR:
-                Toast.makeText(getApplicationContext(), "xml解析错误", 1).show();
-                loadBrowser();
-                break;
-            case IO_ERROR:
-                Toast.makeText(getApplicationContext(), "I/O错误", 1).show();
-                loadBrowser();
-                break;
-            case PROTOCOL_ERROR:
-                Toast.makeText(getApplicationContext(), "协议不支持", 1).show();
-                loadBrowser();
-                break;
-            case SERVER_URL_ERROR:
-                Toast.makeText(getApplicationContext(), "服务器路径不正确", 1).show();
-                loadBrowser();
-                break;
-            case SERVER_ERROR:
-                Toast.makeText(getApplicationContext(), "服务器内部异常", 1).show();
-                loadBrowser();
-                break;
-            case GET_INFO_SUCCESS:
-                int newCode = info.getVerCode();
-                int verCode = getVerCode();
-                //比较版本号
-                if (newCode > verCode) 
-                {
-                    Log.i(TAG, "版本号不相同,升级对话框");
-                    showUpdateDialog();             
-                } 
-                else 
-                {
-                    Log.i(TAG, "版本号相同进入主界面");
+                case XML_PARSE_ERROR:
+                    Toast.makeText(getApplicationContext(), "xml解析错误", 1).show();
                     loadBrowser();
-                }
-                break;
-
-            case DOWNLOAD_SUCCESS:
-                Log.i(TAG, "文件下载成功");
-                File file = (File) msg.obj;
-                installApk(file);
-                break;
-            case DOWNLOAD_ERROR:
-                Toast.makeText(getApplicationContext(), "下载数据异常", 1).show();
-                loadBrowser();
-                break;
+                    break;
+                case IO_ERROR:
+                    Toast.makeText(getApplicationContext(), "I/O错误", 1).show();
+                    loadBrowser();
+                    break;
+                case PROTOCOL_ERROR:
+                    Toast.makeText(getApplicationContext(), "协议不支持", 1).show();
+                    loadBrowser();
+                    break;
+                case SERVER_URL_ERROR:
+                    Toast.makeText(getApplicationContext(), "服务器路径不正确", 1).show();
+                    loadBrowser();
+                    break;
+                case SERVER_ERROR:
+                    Toast.makeText(getApplicationContext(), "服务器内部异常", 1).show();
+                    loadBrowser();
+                    break;
+                case GET_INFO_SUCCESS:
+                    int newCode = info.getVerCode();
+                    int verCode = getVerCode();
+                    //比较版本号
+                    if (newCode > verCode) 
+                    {
+                        Log.i(TAG, "版本号不相同,升级对话框");
+                        showUpdateDialog();             
+                    } 
+                    else 
+                    {
+                        Log.i(TAG, "版本号相同进入主界面");
+                        loadBrowser();
+                    }
+                    break;
+                case DOWNLOAD_SUCCESS:
+                    Log.i(TAG, "文件下载成功");
+                    File file = (File) msg.obj;
+                    //调用安装
+                    installApk(file);
+                    break;
+                case DOWNLOAD_ERROR:
+                    Toast.makeText(getApplicationContext(), "下载数据异常", 1).show();
+                    loadBrowser();
+                    break;
             }
         };
     };
