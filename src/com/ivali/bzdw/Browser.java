@@ -22,7 +22,7 @@ import android.widget.Toast;
 public class Browser extends Activity 
 {
     private WebView webView;
-    private ProgressBar progressBar;
+    //private ProgressBar progressBar;
     private WebSettings webSettings;
     private boolean is2CallBack = false;
     protected static final String TAG = "Browser";
@@ -34,7 +34,7 @@ public class Browser extends Activity
         setContentView(R.layout.browser);
         
         webView = (WebView)findViewById(R.id.webView);
-        progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        //progressBar = (ProgressBar)findViewById(R.id.progressBar);
          
         //初始化webView
         initWebView();
@@ -49,7 +49,7 @@ public class Browser extends Activity
                 quotaUpdater.updateQuota(estimatedSize * 2); 
             } 
             
-            public void onProgressChanged(WebView view, int progress)
+            /*public void onProgressChanged(WebView view, int progress)
             {
                 progressBar.setProgress(progress);
                 if((progress == 100) && (progressBar.isShown()))
@@ -57,7 +57,7 @@ public class Browser extends Activity
                     //设置为不可见
                     progressBar.setVisibility(View.GONE);
                 }
-            }   
+            }*/  
         });
         
         //当点击链接时,希望覆盖而不是打开新窗口
@@ -66,7 +66,7 @@ public class Browser extends Activity
             public boolean shouldOverrideUrlLoading(WebView view, String url) 
             {
                 view.loadUrl(url);
-                progressBar.setVisibility(View.VISIBLE);//可见
+                //progressBar.setVisibility(View.VISIBLE);//可见
                 return true;
             }
             
