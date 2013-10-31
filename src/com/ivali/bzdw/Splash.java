@@ -205,13 +205,6 @@ public class Splash extends Activity
     {
         super.onCreate(savedInstanceState);
         
-        /**
-         * 全屏显示
-         * 两种方法：１是在AndroidManifest.xml中的activity下加
-         * android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-         * １是在代码中加getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, 
-         * WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        **/
         //加载layout布局文件
         setContentView(R.layout.splash);
         
