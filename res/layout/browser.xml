@@ -13,11 +13,8 @@
     
     <WebView
         android:id="@+id/webView"
-        android:background="#cce885"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1" />
-    
-    
-    
+
 </LinearLayout>

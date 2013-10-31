@@ -61,7 +61,7 @@ public class Splash extends Activity
                     loadBrowser();
                     break;
                 case IO_ERROR:
-                    Toast.makeText(getApplicationContext(), "I/O错误", 1).show();
+                    Toast.makeText(getApplicationContext(), "网络异常", 1).show();
                     loadBrowser();
                     break;
                 case PROTOCOL_ERROR:
@@ -232,7 +232,7 @@ public class Splash extends Activity
             try 
             {
                 // 获取服务端的配置信息的连接地址
-                String serverurl = getResources().getString(R.string.server_url);
+                String serverurl = getResources().getString(R.string.update_page);
                 Log.i(TAG, serverurl);
                 URL url = new URL(serverurl);
                 HttpURLConnection conn = (HttpURLConnection) url.openConnection();

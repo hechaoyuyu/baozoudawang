@@ -23,6 +23,7 @@ public class Browser extends Activity
 {
     private WebView webView;
     private ProgressBar progressBar;
+    private WebSettings webSettings;
     private boolean is2CallBack = false;
     protected static final String TAG = "Browser";
     
@@ -34,31 +35,10 @@ public class Browser extends Activity
         
         webView = (WebView)findViewById(R.id.webView);
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
+         
+        //初始化webView
+        initWebView();
         
-        //设置背景透明
-        //webView.setBackgroundColor(Color.argb(0, 0, 0, 0));
-        
-        WebSettings settings = webView.getSettings();
-        //激活JavaScript
-        settings.setJavaScriptEnabled(true);
-        //设置JS本地调用对象及接口 
-        webView.addJavascriptInterface(new Javascript(this), "android"); 
-        //支持JS打开新窗口
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        
-        //使用localStorage
-        settings.setDomStorageEnabled(true);
-        
-        //使用数据缓存
-        settings.setDatabaseEnabled(true);
-        String dbPath = webView.getContext().getDir("databases", Context.MODE_PRIVATE).getPath();
-        settings.setDatabasePath(dbPath);
-        
-        //使用App缓存
-        settings.setAppCacheEnabled(true); 
-        String cachePath =webView.getContext().getDir("cache", Context.MODE_PRIVATE).getPath();
-        settings.setAppCachePath(cachePath);
-       
         //处理数据与进度
         webView.setWebChromeClient(new WebChromeClient()
         {
@@ -89,30 +69,49 @@ public class Browser extends Activity
                 progressBar.setVisibility(View.VISIBLE);//可见
                 return true;
             }
-        });
-        
-        //点击后退按钮,让WebView后退一页(也可以覆写Activity的onKeyDown方法)  
-        webView.setOnKeyListener(new View.OnKeyListener() 
-        {  
-            @Override  
-            public boolean onKey(View v, int keyCode, KeyEvent event) 
-            {  
-                if (event.getAction() == KeyEvent.ACTION_DOWN) 
-                {  
-                    if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) 
-                    {  
-                        webView.goBack();   //后退 
-                        return true;    //已处理  
-                    }  
-                }  
-                return false;  
+            
+            @Override
+            public void onPageFinished(WebView view, String url)
+            {
+                webSettings.setBlockNetworkImage(false);
             }
         });
         
         //打开页面
         String home_page = getResources().getString(R.string.home_page);
         webView.loadUrl(home_page);
-        //webView.loadUrl("http://www.demo.baozoudawang.com/app");
+        //webView.loadUrl("http://www.qq.com");
+    }
+    
+    public void initWebView()
+    {
+        //设置背景透明
+        //webView.setBackgroundColor(Color.argb(0, 0, 0, 0));
+        
+        webSettings = webView.getSettings();
+        
+        //激活JavaScript
+        webSettings.setJavaScriptEnabled(true);
+        //设置JS本地调用对象及接口 
+        webView.addJavascriptInterface(new Javascript(this), "android"); 
+        //支持JS打开新窗口
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        
+        //使用localStorage
+        webSettings.setDomStorageEnabled(true);
+        
+        //使用数据缓存
+        webSettings.setDatabaseEnabled(true);
+        String dbPath = webView.getContext().getDir("databases", Context.MODE_PRIVATE).getPath();
+        webSettings.setDatabasePath(dbPath);
+        
+        //使用App缓存
+        webSettings.setAppCacheEnabled(true); 
+        String cachePath =webView.getContext().getDir("cache", Context.MODE_PRIVATE).getPath();
+        webSettings.setAppCachePath(cachePath);
+       
+        //延后加载图片
+        webSettings.setBlockNetworkImage(true);
     }
     
     //重载屏幕变化事件，禁止重新调用onCreate方法
@@ -127,27 +126,35 @@ public class Browser extends Activity
     @Override  
     public boolean onKeyDown(int keyCode, KeyEvent event) 
     {   
-        if( keyCode == KeyEvent.KEYCODE_BACK)
-        {   
-            if(!is2CallBack)
-            {   
-                is2CallBack = true;   
-                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();    
-                new Handler().postDelayed(new Runnable()
+        if(keyCode == KeyEvent.KEYCODE_BACK)
+        {
+            if(webView.canGoBack() && event.getRepeatCount() == 0) 
+            {  
+                webView.goBack();  
+                return true;  
+            } 
+            else
+            {
+                if(!is2CallBack)
                 {   
-                    @Override  
-                    public void run() 
+                    is2CallBack = true;   
+                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();    
+                    new Handler().postDelayed(new Runnable()
                     {   
-                        is2CallBack = false;   
-                    }   
-                }, 2500);   
+                        @Override  
+                        public void run() 
+                        {   
+                            is2CallBack = false;   
+                        }   
+                    }, 2500);   
 
+                }
+                else 
+                {   
+                    this.finish(); //退出应用
+                } 
             }
-            else 
-            {   
-                this.finish(); //退出应用
-            }   
-        }   
-        return true;   
+        }
+        return true;
     }
 }
