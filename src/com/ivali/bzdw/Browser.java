@@ -80,7 +80,7 @@ public class Browser extends Activity
         //打开页面
         String home_page = getResources().getString(R.string.home_page);
         webView.loadUrl(home_page);
-        //webView.loadUrl("http://www.qq.com");
+        //webView.loadUrl("http://weibo.com/");
     }
     
     public void initWebView()
@@ -97,6 +97,9 @@ public class Browser extends Activity
         //支持JS打开新窗口
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         
+        //记录密码到webview.db中，高危险！！！
+        //webSettings.setSavePassword(true);
+        
         //使用localStorage
         webSettings.setDomStorageEnabled(true);
         
@@ -109,6 +112,8 @@ public class Browser extends Activity
         webSettings.setAppCacheEnabled(true); 
         String cachePath =webView.getContext().getDir("cache", Context.MODE_PRIVATE).getPath();
         webSettings.setAppCachePath(cachePath);
+        //设置缓存模式
+        webSettings.setCacheMode(webSettings.LOAD_CACHE_ELSE_NETWORK);
        
         //延后加载图片
         webSettings.setBlockNetworkImage(true);
