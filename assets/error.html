@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>暴走大王移动版</title>
+<meta name="viewport" content="width=device-width,height=device-height, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
+<meta content="telephone=no" name="format-detection" />
+<style>
+html,body{
+    overflow: hidden;
+}
+body{background: #f5f5f5;}
+*{margin: 0;padding:0;}
+@font-face {
+    font-family: 'icomoon';
+    src:url('fonts/icomoon.eot');
+    src:url('fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+        url('fonts/icomoon.ttf') format('truetype'),
+        url('fonts/icomoon.woff') format('woff'),
+        url('fonts/icomoon.svg#icomoon') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+[class*="icon-"] {
+    font-family: 'icomoon';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+.icon-error{
+   font-size: 24px;
+   width: 24px;
+   height: 24px;
+   color: #d96957; 
+   display: inline-block;
+   vertical-align: -3px;
+   margin-right: 5px;
+}
+.icon-logo{
+    font-size: 72px;
+    width: 72px;
+    height: 72px;
+    display: block;
+    margin: 0 auto;
+    color: #5fb751;
+    text-shadow: 1px 1px 8px #4fa841;
+}
+.icon-error:before {
+    content: "\e600";
+}
+.icon-logo:before {
+    content: "\e601";
+}
+.error-box{
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    margin-top: -72px;
+}
+.error-info{
+    text-align: center;
+    font-size: 120%;
+    padding-top: 10px;
+}
+</style>
+</head>
+<body>
+<div class="error-box">
+    <span class="icon-logo"></span>
+    <p class="error-info"><span class="icon-error"></span>抱歉，网络不给力，请检查您的网络！</p>
+</div>
+</body>
+</html>

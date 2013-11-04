@@ -1,33 +1,36 @@
 
 package com.ivali.bzdw;
 
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
+import android.net.http.SslError;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 @SuppressLint("SetJavaScriptEnabled")
-public class Browser extends Activity 
+public class WebClient extends Activity 
 {
-    private WebView webView;
-    //private ProgressBar progressBar;
+	//private ProgressBar progressBar;
+    protected static WebView webView;
     private WebSettings webSettings;
+    private NetReceiver netReceiver;
     private boolean is2CallBack = false;
     protected static final String TAG = "Browser";
     
-    @Override
+	@Override
     protected void onCreate(Bundle savedInstanceState) 
     {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,9 @@ public class Browser extends Activity
          
         //初始化webView
         initWebView();
+        
+        //监测网络变化
+        checkNetChange();
         
         //处理数据与进度
         webView.setWebChromeClient(new WebChromeClient()
@@ -70,6 +76,27 @@ public class Browser extends Activity
                 return true;
             }
             
+			@Override 
+            public void onReceivedError(WebView view, int errorCode, 
+                    String description, String failingUrl) 
+            { 
+            	Toast.makeText(getBaseContext(), description, Toast.LENGTH_SHORT);
+            	//view.loadUrl("file:///android_asset/error.html");      
+            } 
+            
+            /*
+             * 当load有ssl层的https页面时，如果这个网站的安全证书在Android无法得到认证，WebView就会变成一个空白页，
+             * 而并不会像PC浏览器中那样跳出一个风险提示框，为以后的支付网页做准备。
+            */
+            @Override  
+            public void onReceivedSslError(WebView view, SslErrorHandler handler,  
+                    SslError error) 
+            {  
+                //忽略证书的错误继续Load页面内容  
+                 handler.proceed();  
+                //handler.cancel(); // Android默认的处理方式 
+            }  
+            
             @Override
             public void onPageFinished(WebView view, String url)
             {
@@ -80,7 +107,6 @@ public class Browser extends Activity
         //打开页面
         String home_page = getResources().getString(R.string.home_page);
         webView.loadUrl(home_page);
-        //webView.loadUrl("http://weibo.com/");
     }
     
     public void initWebView()
@@ -93,7 +119,7 @@ public class Browser extends Activity
         //激活JavaScript
         webSettings.setJavaScriptEnabled(true);
         //设置JS本地调用对象及接口 
-        webView.addJavascriptInterface(new Javascript(this), "android"); 
+        webView.addJavascriptInterface(new JavaScript(this), "android"); 
         //支持JS打开新窗口
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
         
@@ -113,8 +139,11 @@ public class Browser extends Activity
         String cachePath =webView.getContext().getDir("cache", Context.MODE_PRIVATE).getPath();
         webSettings.setAppCachePath(cachePath);
         //设置缓存模式
-        webSettings.setCacheMode(webSettings.LOAD_CACHE_ELSE_NETWORK);
+        webSettings.setCacheMode(WebSettings.LOAD_DEFAULT);
        
+        //自适应网页
+        webSettings.setUseWideViewPort(true);
+        webSettings.setLoadWithOverviewMode(true);
         //延后加载图片
         webSettings.setBlockNetworkImage(true);
     }
@@ -133,33 +162,52 @@ public class Browser extends Activity
     {   
         if(keyCode == KeyEvent.KEYCODE_BACK)
         {
-            if(webView.canGoBack() && event.getRepeatCount() == 0) 
+            /*if(webView.canGoBack() && event.getRepeatCount() == 0) 
             {  
                 webView.goBack();  
                 return true;  
             } 
             else
-            {
-                if(!is2CallBack)
-                {   
-                    is2CallBack = true;   
-                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();    
-                    new Handler().postDelayed(new Runnable()
-                    {   
-                        @Override  
-                        public void run() 
-                        {   
-                            is2CallBack = false;   
-                        }   
-                    }, 2500);   
+            {*/
+        	if(!is2CallBack)
+        	{   
+        		is2CallBack = true;   
+        		Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();    
+        		new Handler().postDelayed(new Runnable()
+        		{   
+        			@Override  
+        			public void run() 
+        			{   
+        				is2CallBack = false;   
+        			}   
+        		}, 2500);   
 
-                }
-                else 
-                {   
-                    this.finish(); //退出应用
-                } 
-            }
+        	}
+        	else 
+        	{   
+        		this.finish(); //退出应用
+        	} 
+            //}
         }
         return true;
+    }
+    
+    public void checkNetChange()
+    {
+    	//注册广播监测网络连接变化
+    	netReceiver = new NetReceiver();
+    	IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        this.registerReceiver(netReceiver, filter);
+    }
+    
+    @Override 
+    public void onDestroy() 
+    {
+        super.onDestroy();
+        //当应用销毁，注销BroadcastReceiver.
+        if (netReceiver != null) 
+        {
+            this.unregisterReceiver(netReceiver);
+        }
     }
 }

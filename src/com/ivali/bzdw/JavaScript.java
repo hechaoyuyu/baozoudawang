@@ -6,16 +6,16 @@ import android.net.NetworkInfo;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
 
-public class Javascript 
+public class JavaScript 
 {
     Context mContxt;  
     private int netMode;
-    protected static final String TAG = "Javascript";
+    protected static final String TAG = "JavaScript";
     
-    public Javascript(Context mContxt) 
+    public JavaScript(Context mContxt) 
     {  
         this.mContxt = mContxt; 
-        netMode = getAPNType(mContxt);
+        //netMode = getAPNType(mContxt);
     } 
     
     /*
@@ -26,7 +26,9 @@ public class Javascript
     @JavascriptInterface
     public int getNetMode()
     {
+    	netMode = getAPNType(mContxt);
         Log.d(TAG, "返回值为："+netMode);
+        
         return netMode;
     }
     

@@ -1,10 +1,11 @@
 package com.ivali.bzdw;
 
-public class Update 
+public class UpdateInfo 
 {
     private int verCode = 1;
     private String description;
     private String apkUrl;
+    
     public int getVerCode() 
     {
         return verCode;

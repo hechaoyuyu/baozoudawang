@@ -20,7 +20,7 @@
         API13之后，必须要添加screenSize，主要是为了屏幕旋转时保持Activity内容
         -->  
         <activity
-            android:name=".Browser"
+            android:name=".WebClient"
             android:label="@string/app_name"            
             android:hardwareAccelerated="true"           
             android:theme="@android:style/Theme.NoTitleBar" 
@@ -31,7 +31,7 @@
         强制屏幕方向为竖屏：android:screenOrientation="portrait"
         -->
         <activity
-            android:name=".Splash"
+            android:name=".SplashScreen"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
